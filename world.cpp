@@ -2,28 +2,31 @@
 #include <GL/glut.h>
 #include <math.h>
 
+#include "map_loader.h"
+
 #include <iostream>
 using namespace std;
 
-GLfloat posx=50.0,posz=250.0;
+GLfloat posx=850.0,posz=1000.0;
 GLfloat visibility=100.0;
 GLfloat step_length=10.0;
 GLfloat pRotationz=0;
+levelMap myMap;
 
 void init(void)
 {
 	glClearColor (1.0, 1.0, 1.0, 1.0);
 	glClearDepth(1.0);
-	//glShadeModel (GL_FLAT);
 	glEnable(GL_DEPTH_TEST);
 	glutSetCursor(GLUT_CURSOR_CROSSHAIR);
-
+	myMap.loadCoordinates();
+	myMap.loadVertices();	
+	cout<<myMap.vertices[20];
 }
 
 void Rotate(int x,int y){
 	
 	pRotationz += 0.01*(-x+1364.0/2.0);
-	//cout<<x<<","<<y<<endl;
 	glutPostRedisplay();
 }
 
@@ -31,63 +34,16 @@ void display(void)
 {
 
 	glClear (GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
-	static GLint vertices[] = {0,0,0,
-		100, 0, 0,
-		100, 100, 0,
-		0, 100, 0,
-		0, 0, 100,
-		100, 0, 100,
-		100, 100, 100,
-		0, 100, 100 ,
-		//side limb
-		100, 0, 0,
-		200, 0 ,0,
-		200, 100, 0,
-		100, 100, 0,
-		100, 0, 50,
-		200, 0 ,50,
-		200, 100, 50,
-		100, 100, 50,
-		};
-		
-	static GLfloat colors[] = {1.0, 0.2, 0.2,
-		0.2, 0.2, 1.0,
-		0.8, 1.0, 0.2,
-		0.5, 0.75, 0.075,
-		0.035, 0.35, 0.35,
-		1.0, 0.0, 1.0,
-		0.5, 0.5, 0.5,
-		0.0, 0.4, 0.0,
-		//second limb
-		0.2, 0.2, 1.0,
-		1.0, 0.8, 0.4,
-		0.8, 1.0, 0.2,
-		0.75, 0.75, 0.075,
-		0.035, 0.35, 0.35,
-		1.0, 0.0, 1.0,
-		0.5, 0.5, 0.5,
-		0.0, 0.4, 0.0};
-	glEnableClientState (GL_COLOR_ARRAY);
+	glColor3f(0.3,0.3,0.3);
 	glEnableClientState (GL_VERTEX_ARRAY);
-	glVertexPointer (3, GL_INT, 0, vertices);
-	glColorPointer (3, GL_FLOAT, 0, colors);
+	glVertexPointer (3, GL_INT, 0, &myMap.coords[0]);
 	glLoadIdentity ();
-	gluLookAt (posx, 50.0, posz, posx*(1-sin(pRotationz)), 50.0, posz*(1-cos(pRotationz)), 0.0, 1.0, 0.0);
+	gluLookAt (posx, 0.0, posz, posx*(1-sin(pRotationz)), 0.0, posz*(1-cos(pRotationz)), 0.0, 1.0, 0.0);
 	
-	static GLubyte allIndices[]={4,5,6,7,
-		1, 2, 6, 5,
-		0, 1, 5, 4,
-		0, 3, 2, 1,
-		0, 4, 7, 3, 
-		2, 3, 7, 6,
-		12,13,14,15,
-		9,10,14,13,
-		8,9,13,12,
-		8,11,10,9,
-		8,12,15,11,
-		10,11,15,14};
+	static GLint allIndices[]={0,1,5,4,4,5,7,6,8,9,11,10,10,11,13,12,12,13,19,18};
+		
+	glDrawElements(GL_QUADS, myMap.vertices.size(), GL_UNSIGNED_BYTE, &myMap.vertices[0]);
 
-	glDrawElements(GL_QUADS, 48, GL_UNSIGNED_BYTE, allIndices);
 	glutWarpPointer(1364/2,742/2);
 	glutSwapBuffers();
 }
@@ -143,7 +99,7 @@ void reshape (int w, int h)
 
 
 int main(int argc, char** argv)
-{
+{	
 	glutInit(&argc, argv);
 	glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	glutInitWindowSize (1364, 742);
@@ -156,7 +112,5 @@ int main(int argc, char** argv)
 	glutPassiveMotionFunc(Rotate);
 	glutKeyboardFunc(keyboard);
 	glutMainLoop();
-	loadCoordinates();
-	loadVertices();
 	return 0;
 }
