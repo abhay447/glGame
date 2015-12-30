@@ -22,7 +22,7 @@ class levelMap
 	}
 	string coordFile,vertexFile;
 	int LEVEL=1;
-	vector<GLint> coords;
+	vector<GLfloat> coords;
 	vector<GLubyte> vertices;
 	vector<wall> walls;
 	void loadCoordinates();
@@ -30,7 +30,7 @@ class levelMap
 };
 void levelMap::loadCoordinates()
 {
-	GLint x,y,z;
+	GLfloat x,y,z;
 	ifstream ifs;
 	ifs.open(coordFile.c_str());
 	string line;
@@ -59,10 +59,10 @@ void levelMap::loadVertices()
 		vertices.push_back((GLubyte)c);
 		vertices.push_back((GLubyte)d);
 		
-		GLint x1 = coords[a*3+0];
-		GLint z1 = coords[a*3+2];
-		GLint x2 = coords[c*3+0];
-		GLint z2 = coords[c*3+2];
+		GLfloat x1 = coords[a*3+0];
+		GLfloat z1 = coords[a*3+2];
+		GLfloat x2 = coords[c*3+0];
+		GLfloat z2 = coords[c*3+2];
 		wall thisWall(x1,x2,z1,z2);
 		walls.push_back(thisWall);
 	}

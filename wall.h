@@ -4,21 +4,21 @@
 
 using namespace std;
 
-int THRESHOLD=1;
+float THRESHOLD=0.6;
 
 class wall
 {
 	public:
-		wall(GLint x1,GLint x2,GLint z1,GLint z2)
+		wall(GLfloat x1,GLfloat x2,GLfloat z1,GLfloat z2)
 		{
 			Xmin = (x1<x2)?x1:x2;
 			Xmax = (x1>x2)?x1:x2;
 			Zmin = (z1<z2)?z1:z2;
 			Zmax = (z1>z2)?z1:z2;
 		}
-		GLint Xmin,Xmax,Zmin,Zmax;
+		GLfloat Xmin,Xmax,Zmin,Zmax;
 		
-		int checkCollision(GLint x, GLint z);
+		int checkCollision(GLfloat x, GLfloat z);
 };
 
 
@@ -28,11 +28,11 @@ class wall
 **	1: free x only					 **
 **	2: free z only					 **
 **===================================*/
-int wall::checkCollision(GLint x, GLint z)
+int wall::checkCollision(GLfloat x, GLfloat z)
 {
 	if(Xmin==Xmax) //Wall parallel to z axis
 	{
-		int distance = abs(Xmin-x);
+		float distance = fabs(Xmin-x);
 		if(distance > THRESHOLD)
 			return 0;
 		else
@@ -46,7 +46,7 @@ int wall::checkCollision(GLint x, GLint z)
 	
 	if(Zmin==Zmax) //Wall parallel to x axis
 	{
-		int distance = abs(Zmin-z);
+		float distance = fabs(Zmin-z);
 		if(distance > THRESHOLD)
 			return 0;
 		else

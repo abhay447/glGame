@@ -22,6 +22,8 @@ void Rotate(int x,int y){
 
 void move()
 {
+	if(keyStates[27])
+		exit(0);
 	if(keyStates['w']||keyStates['W'])
 	{
 		tempz=posz-step_length*cos(pRotationz);
