@@ -21,7 +21,6 @@ void collide()
 			case 2:
 				XRestriction++;
 		}
-		cout<<result<<endl;
 	}
 	if(XRestriction==0)
 		posx=tempx;

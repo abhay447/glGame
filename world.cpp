@@ -1,18 +1,21 @@
+#include <iostream>
 #include <GL/gl.h>
 #include <GL/glut.h>
 #include <math.h>
 
 #include "map_loader.h"
 #include "wallCollider.cpp"
+#include "controls.h"
 
-#include <iostream>
 using namespace std;
 
-GLfloat posx=850.0,posz=1000.0;
+GLfloat posx=850.0,posz=996.0;
 GLfloat tempx=850.0,tempz=1000.0;
 GLfloat visibility=100.0;
-GLfloat step_length=3.0;
+GLfloat step_length=1.0;
 GLfloat pRotationz=0;
+bool* keyStates = new bool[256];
+
 levelMap myMap;
 
 void init(void)
@@ -26,14 +29,9 @@ void init(void)
 	cout<<myMap.vertices[20];
 }
 
-void Rotate(int x,int y){
-	
-	pRotationz += 0.01*(-x+1364.0/2.0);
-	glutPostRedisplay();
-}
-
 void display(void)
 {
+	move();
 	glClear (GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
 	glColor3f(0.3,0.3,0.3);
 	glEnableClientState (GL_VERTEX_ARRAY);
@@ -44,33 +42,6 @@ void display(void)
 	glDrawElements(GL_QUADS, myMap.vertices.size(), GL_UNSIGNED_BYTE, &myMap.vertices[0]);
 	glutWarpPointer(1364/2,742/2);
 	glutSwapBuffers();
-}
-
-void keyboard (unsigned char key, int x, int y)
-{
-	switch (key) {
-		case 'w':
-			tempz=posz-step_length*cos(pRotationz);
-			tempx=posx-step_length*sin(pRotationz);
-			break;
-		case 'a':
-			tempz=posz+step_length*sin(pRotationz);
-			tempx=posx-step_length*cos(pRotationz);
-			break;
-		case 's':
-			tempz=posz+step_length*cos(pRotationz);
-			tempx=posx+step_length*sin(pRotationz);
-			break;
-		case 'd':
-			tempz=posz-step_length*sin(pRotationz);
-			tempx=posx+step_length*cos(pRotationz);
-			break;
-		
-		default:
-			break;
-	}
-	collide();
-	glutPostRedisplay();
 }
 
 void reshape (int w, int h)
@@ -96,7 +67,9 @@ int main(int argc, char** argv)
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
 	glutPassiveMotionFunc(Rotate);
-	glutKeyboardFunc(keyboard);
+	glutKeyboardFunc(keyDown);
+	glutKeyboardUpFunc(keyUp);
+	initializeKeyboard();
 	glutMainLoop();
 	return 0;
 }
