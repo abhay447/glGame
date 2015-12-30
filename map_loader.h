@@ -8,6 +8,8 @@
 #include <GL/glut.h>
 #include <math.h>
 
+#include "wall.h"
+
 using namespace std;
 
 class levelMap
@@ -22,6 +24,7 @@ class levelMap
 	int LEVEL=1;
 	vector<GLint> coords;
 	vector<GLubyte> vertices;
+	vector<wall> walls;
 	void loadCoordinates();
 	void loadVertices();
 };
@@ -43,7 +46,7 @@ void levelMap::loadCoordinates()
 
 void levelMap::loadVertices()
 {
-	GLint a,b,c,d;
+	int a,b,c,d;
 	ifstream ifs;
 	ifs.open(vertexFile.c_str());
 	string line;
@@ -55,6 +58,13 @@ void levelMap::loadVertices()
 		vertices.push_back((GLubyte)b);
 		vertices.push_back((GLubyte)c);
 		vertices.push_back((GLubyte)d);
+		
+		GLint x1 = coords[a*3+0];
+		GLint z1 = coords[a*3+2];
+		GLint x2 = coords[c*3+0];
+		GLint z2 = coords[c*3+2];
+		wall thisWall(x1,x2,z1,z2);
+		walls.push_back(thisWall);
 	}
 }
 

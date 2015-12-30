@@ -3,13 +3,15 @@
 #include <math.h>
 
 #include "map_loader.h"
+#include "wallCollider.cpp"
 
 #include <iostream>
 using namespace std;
 
 GLfloat posx=850.0,posz=1000.0;
+GLfloat tempx=850.0,tempz=1000.0;
 GLfloat visibility=100.0;
-GLfloat step_length=10.0;
+GLfloat step_length=3.0;
 GLfloat pRotationz=0;
 levelMap myMap;
 
@@ -32,18 +34,14 @@ void Rotate(int x,int y){
 
 void display(void)
 {
-
 	glClear (GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
 	glColor3f(0.3,0.3,0.3);
 	glEnableClientState (GL_VERTEX_ARRAY);
 	glVertexPointer (3, GL_INT, 0, &myMap.coords[0]);
 	glLoadIdentity ();
-	gluLookAt (posx, 0.0, posz, posx*(1-sin(pRotationz)), 0.0, posz*(1-cos(pRotationz)), 0.0, 1.0, 0.0);
-	
-	static GLint allIndices[]={0,1,5,4,4,5,7,6,8,9,11,10,10,11,13,12,12,13,19,18};
-		
+	gluLookAt (posx, 10.0, posz, posx*(1-sin(pRotationz)), 10.0, posz*(1-cos(pRotationz)), 0.0, 1.0, 0.0);
+	static GLint allIndices[]={0,1,5,4,4,5,7,6,8,9,11,10,10,11,13,12,12,13,19,18};	
 	glDrawElements(GL_QUADS, myMap.vertices.size(), GL_UNSIGNED_BYTE, &myMap.vertices[0]);
-
 	glutWarpPointer(1364/2,742/2);
 	glutSwapBuffers();
 }
@@ -52,39 +50,27 @@ void keyboard (unsigned char key, int x, int y)
 {
 	switch (key) {
 		case 'w':
-			posz=posz-step_length*cos(pRotationz);
-			posx=posx-step_length*sin(pRotationz);
-			glutPostRedisplay();
+			tempz=posz-step_length*cos(pRotationz);
+			tempx=posx-step_length*sin(pRotationz);
 			break;
 		case 'a':
-			posz=posz+step_length*sin(pRotationz);
-			posx=posx-step_length*cos(pRotationz);
-			glutPostRedisplay();
+			tempz=posz+step_length*sin(pRotationz);
+			tempx=posx-step_length*cos(pRotationz);
 			break;
 		case 's':
-			posz=posz+step_length*cos(pRotationz);
-			posx=posx+step_length*sin(pRotationz);
-			glutPostRedisplay();
+			tempz=posz+step_length*cos(pRotationz);
+			tempx=posx+step_length*sin(pRotationz);
 			break;
 		case 'd':
-			posz=posz-step_length*sin(pRotationz);
-			posx=posx+step_length*cos(pRotationz);
-			glutPostRedisplay();
-			break;
-		
-		case '4':
-			pRotationz += 90;
-			glutPostRedisplay();
-			break;
-		
-		case '6':
-			pRotationz -= 90;
-			glutPostRedisplay();
+			tempz=posz-step_length*sin(pRotationz);
+			tempx=posx+step_length*cos(pRotationz);
 			break;
 		
 		default:
 			break;
 	}
+	collide();
+	glutPostRedisplay();
 }
 
 void reshape (int w, int h)
